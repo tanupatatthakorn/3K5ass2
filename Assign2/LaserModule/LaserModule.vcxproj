@@ -128,6 +128,7 @@
   <ItemGroup>
     <ClCompile Include="..\Common\SMObject.cpp" />
     <ClCompile Include="LaserMain.cpp" />
+    <ClCompile Include="LiDAR.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LiDAR.h" />

@@ -4,13 +4,15 @@
 #include <iostream>
 #include <TlHelp32.h>
 
+#define UNIT_PROCESS 1
+
 using namespace System; // for console
 using namespace System::Threading;
 
 // Start up sequence
 TCHAR* Units[10] = //
 {
-	TEXT("LASERModule.exe"),
+	//TEXT("LASERModule.exe"),
 	TEXT("GPSModule.exe"),
 	TEXT("XBoxModule.exe"),
 	TEXT("VehicleModule.exe"),
@@ -62,7 +64,7 @@ int main() {
 	PMSMPtr->Heartbeats.Status = 0xFF;
 
 	// Starting the processes
-	for (int i = 0; i < 2; i++)
+	for (int i = 0; i < UNIT_PROCESS; i++)
 	{
 		// Check if each process is running
 		if (!IsProcessRunning(Units[i]))
@@ -119,17 +121,28 @@ int main() {
 		//	// if GPS is critical we shutdown all
 		//	//PMSMPtr->Shutdown.Status = 0xFF;
 		//}
+		
 
 		if (_kbhit()) {
-			PMSMPtr->Shutdown.Status = 0xFE;
-			Thread::Sleep(1000);
-			break;
-		}
+			PMSMPtr->Shutdown.Status = 0xFF;
+			bool ShutdownAll = false;
+			while (!ShutdownAll) {
+				for (int i = 0; i < UNIT_PROCESS; i++) {
+					if (IsProcessRunning(Units[i])) {
+						ShutdownAll = false;
+						break;
+					}
+					else {
+						ShutdownAll = true;
+					}
 
-	
+				}
+			}
+		}
 		Thread::Sleep(10);
-		Console::WriteLine("GPS Hearthbeats: " + PMSMPtr->Heartbeats.Flags.GPS);
+		Console::WriteLine("GPS Hearthbeats: {0}", PMSMPtr->Heartbeats.Flags.GPS);
 	}
+	Console::ReadKey();
 	Console::WriteLine("Process manager terminated");
 	Console::ReadKey();
 	return 0;

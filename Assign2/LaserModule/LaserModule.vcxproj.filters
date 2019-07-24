@@ -21,6 +21,9 @@
     <ClCompile Include="LaserMain.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="LiDAR.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="LiDAR.h">

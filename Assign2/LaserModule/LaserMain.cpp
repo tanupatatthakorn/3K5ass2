@@ -5,18 +5,6 @@
 
 #include "LiDAR.h"
 
-/*
-sadaksdlkas
-d
-asdkaksd
-asd
-askd
-aksd
-asdk
-a
-kds
-akdsk
-*/
 using namespace System; // for console
 using namespace System::Threading;
 using namespace System::Net::Sockets;

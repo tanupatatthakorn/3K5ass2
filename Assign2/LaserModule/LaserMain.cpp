@@ -15,7 +15,12 @@ aksd
 asdk
 a
 kds
-akdsk
+ak
+as;dasda'ds;
+a;d
+'a;sdasdas
+d
+';dsk
 */
 using namespace System; // for console
 using namespace System::Threading;

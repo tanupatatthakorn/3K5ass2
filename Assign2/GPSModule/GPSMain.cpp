@@ -33,7 +33,7 @@ int main() {
 				PMSMPtr->Shutdown.Status = 0xFF;
 			}
 		}
-		if (_kbhit()) break;
+		//if (_kbhit()) break;
 		Thread::Sleep(20);
 	}
 

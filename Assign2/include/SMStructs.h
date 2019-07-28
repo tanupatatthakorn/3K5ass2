@@ -46,4 +46,5 @@ struct Laser
 {
 	double XRange[600];
 	double YRange[600];
+	int NumRanges;
 };

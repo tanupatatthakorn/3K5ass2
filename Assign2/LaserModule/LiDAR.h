@@ -21,7 +21,7 @@ private:
 	System::String^ IPAddress;
 	double StartAngle;
 	double Resolution;
-	System::String^ Message;
+	System::String^ ResponseData;
 
 public:
 	int NumRanges;
@@ -32,4 +32,6 @@ public:
 	LiDAR(System::String^ ipaddress, int port);
 	bool Connect();
 	void GetXYRangeData();
+	double GetStartAngle();
+	double GetResolution();
 };

@@ -12,18 +12,39 @@ using namespace System::Net;
 using namespace System::Text;
 
 int main() {
+	//SMObjects
 	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
+	SMObject LaserObj(_TEXT("LaserObj"), sizeof(Laser));
+	//Instantiate LiDAR Obj
+	LiDAR^ MyLaser = gcnew LiDAR("192.168.1.200", 23000);
 	PM* PMSMPtr = nullptr;
-	int waitCount = 0;
+	Laser* LaserPtr = nullptr;
+
 	PMObj.SMAccess();
+	LaserObj.SMAccess();
+
 	if (PMObj.SMAccessError) {
 		Console::WriteLine("Shared memory access failed");
 		return -2;
 	}
+	if (LaserObj.SMAccessError) {
+		Console::WriteLine("Shared memory access failed");
+		return -2;
+	}
 
+	//Instantiate pointers
 	PMSMPtr = (PM*)PMObj.pData;
 	PMSMPtr->Shutdown.Flags.Laser = 0;
+	LaserPtr = (Laser*)LaserObj.pData;
+	
 
+	//initiate wait count
+	int waitCount = 0;
+	
+
+	
+
+	/*
 	// LMS151 port number must be 23000
 	int PortNumber = 23000;
 	// Pointer to TcpClent type object on managed heap
@@ -65,7 +86,7 @@ int main() {
 
 	// Convert string command to an array of unsigned char
 	SendData = System::Text::Encoding::ASCII->GetBytes(AskID);
-
+	// Send Authetication String
 	Stream->Write(SendData, 0, SendData->Length);
 	// Read the incoming data
 	Stream->Read(ReadData, 0, ReadData->Length);
@@ -73,58 +94,76 @@ int main() {
 	ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
 	// Print the received string on the screen
 	Console::WriteLine(ResponseData);
-
-	SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
-
-	// Write command asking for data
-	Stream->WriteByte(0x02);
-	Stream->Write(SendData, 0, SendData->Length);
-	Stream->WriteByte(0x03);
-	// Wait for the server to prepare the data, 1 ms would be sufficient, but used 10 ms
-	System::Threading::Thread::Sleep(10);
-	// Read the incoming data
-	Stream->Read(ReadData, 0, ReadData->Length);
-	// Convert incoming data from an array of unsigned char bytes to an ASCII string
-	ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
-	// Print the received string on the screen
-	Console::WriteLine(ResponseData);
-
-	//point to array of pointers
-	Fragments = ResponseData->Split(' ');
-
-	StartAngle = System::Convert::ToInt32(Fragments[23], 16);
-	Resolution = System::Convert::ToInt32(Fragments[24], 16);
-	NumRanges = System::Convert::ToInt32(Fragments[25], 16);
-
-	array<double>^ Range = gcnew array<double>(NumRanges);
-	array<double>^ RangeX = gcnew array<double>(NumRanges);
-	array<double>^ RangeY = gcnew array<double>(NumRanges);
-	for (int i = 0; i < NumRanges; i++)
-	{
-		Range[i] = System::Convert::ToInt32(Fragments[26 + i], 16);
-		RangeX[i] = Range[i] * sin(i * Resolution * Math::PI / 180.0);
-		RangeY[i] = -Range[i] * cos(i * Resolution * Math::PI / 180.0);
-	}
-
+	*/
 
 	while (!PMSMPtr->Shutdown.Flags.Laser) {
+		/*
+		SendData = System::Text::Encoding::ASCII->GetBytes(AskScan);
 
-		Console::WriteLine("In GPS Set Laser LOWWW");
+		// Write command asking for data
+		Stream->WriteByte(0x02);
+		Stream->Write(SendData, 0, SendData->Length);
+		Stream->WriteByte(0x03);
+		// Wait for the server to prepare the data, 1 ms would be sufficient, but used 10 ms
+		System::Threading::Thread::Sleep(10);
+		// Read the incoming data
+		Stream->Read(ReadData, 0, ReadData->Length);
+		// Convert incoming data from an array of unsigned char bytes to an ASCII string
+		ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+		// Print the received string on the screen
+		//Console::WriteLine(ResponseData);
+
+		//point to array of pointers
+		Fragments = ResponseData->Split(' ');
+
+		StartAngle = System::Convert::ToInt32(Fragments[23], 16);
+		Resolution = System::Convert::ToInt32(Fragments[24], 16) / 10000.0;
+		NumRanges = System::Convert::ToInt32(Fragments[25], 16);
+
+		array<double>^ Range = gcnew array<double>(NumRanges);
+		array<double>^ RangeX = gcnew array<double>(NumRanges);
+		array<double>^ RangeY = gcnew array<double>(NumRanges);
+
+		//for (int i = 0; i < NumRanges; i++)
+		//{
+		//	Range[i] = System::Convert::ToInt32(Fragments[26 + i], 16);
+		//	RangeX[i] = Range[i] * Math::Sin(i * Resolution * Math::PI / 180.0);
+		//	RangeY[i] = -Range[i] * Math::Cos(i * Resolution * Math::PI / 180.0);
+		//	//Console::WriteLine("Range " + Range[i] + " (X,Y) " + RangeX[i] + " " + RangeY[i] + " " + NumRanges);
+		//}
+		if (NumRanges != 361) continue;
+		Console::WriteLine("NumePoints: " + NumRanges + " Start Angle: " + StartAngle + " Resolution: " + Resolution);
+		*/
+
+		int num = LaserPtr->NumRanges;
+
+		for (int i = 0; i < num; i++) {
+			LaserPtr->XRange[i] = MyLaser->RangeX[i];
+			LaserPtr->YRange[i] = MyLaser->RangeY[i];
+		}
+
+		Console::WriteLine("Angle: " + MyLaser->GetStartAngle() + " Reso: " + MyLaser->GetResolution());
+
 		PMSMPtr->Heartbeats.Flags.Laser = 1;
 		if (PMSMPtr->PMHeartbeats.Flags.Laser == 1) {
-			Console::WriteLine("In GPS Set Laser LOW");
+			
 			PMSMPtr->PMHeartbeats.Flags.Laser = 0;
 			waitCount = 0;
 		}
 		else {
-			if (++waitCount > 20) {
+			if (++waitCount > 50) {
 				// we have waited too long
 				PMSMPtr->Shutdown.Status = 0xFF;
 			}
+			
 		}
-
-		Console::WriteLine("Laser Process terminated");
-		Console::ReadKey();
-		return 0;
+		//if (_kbhit()) break;
+		Thread::Sleep(20);
+			
 	}
+
+
+	Console::WriteLine("Laser Process terminated");
+	//Console::ReadKey();
+	return 0;
 }

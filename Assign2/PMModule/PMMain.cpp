@@ -4,7 +4,7 @@
 #include <iostream>
 #include <TlHelp32.h>
 
-#define UNIT_PROCESS 1
+#define UNIT_PROCESS 2
 
 using namespace System; // for console
 using namespace System::Threading;
@@ -12,7 +12,7 @@ using namespace System::Threading;
 // Start up sequence
 TCHAR* Units[10] = //
 {
-	//TEXT("LASERModule.exe"),
+	TEXT("LASERModule.exe"),
 	TEXT("GPSModule.exe"),
 	TEXT("XBoxModule.exe"),
 	TEXT("VehicleModule.exe"),
@@ -45,7 +45,9 @@ bool IsProcessRunning(const char* processName)
 
 int main() {
 	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
+	SMObject LaserObj(_TEXT("LaserObj"), sizeof(Laser));
 	PM* PMSMPtr = nullptr;
+	Laser* LaserPtr = nullptr;
 
 	PMObj.SMCreate();
 	if (PMObj.SMCreateError) {
@@ -59,9 +61,14 @@ int main() {
 		return -2;
 	}
 
+	LaserObj.SMCreate();
+	LaserObj.SMAccess();
+
 	PMSMPtr = (PM*)PMObj.pData;
 	PMSMPtr->Shutdown.Flags.PM = 0;
 	PMSMPtr->Heartbeats.Status = 0xFF;
+
+	LaserPtr = (Laser*)LaserObj.pData;
 
 	// Starting the processes
 	for (int i = 0; i < UNIT_PROCESS; i++)
@@ -92,7 +99,7 @@ int main() {
 			}
 		}
 		std::cout << "Started: " << Units[i] << std::endl;
-		Sleep(1000);
+		Sleep(200);
 	}
 
 	while (!PMSMPtr->Shutdown.Flags.PM) {
@@ -108,22 +115,20 @@ int main() {
 			PMSMPtr->Shutdown.Status = 0xFF;
 		}
 
-		//// Laser must have set this to HIGH
-		//PMSMPtr->PMHeartbeats.Flags.Laser = 1;
-		//if (PMSMPtr->Heartbeats.Flags.Laser == 1) {
-		//	//Console::WriteLine("In PM Set GPS HIGH");
-		//	Console::WriteLine(PMSMPtr->Heartbeats.Flags.Laser);
-		//	PMSMPtr->Heartbeats.Flags.Laser = 0;
-		//	Console::WriteLine(PMSMPtr->Heartbeats.Flags.Laser);
-		//	PMSMPtr->PMHeartbeats.Flags.Laser = 1;
-		//}
-		//else {
-		//	// if GPS is critical we shutdown all
-		//	//PMSMPtr->Shutdown.Status = 0xFF;
-		//}
+		PMSMPtr->PMHeartbeats.Flags.Laser = 1;
+		if (PMSMPtr->Heartbeats.Flags.Laser == 1) {
+			
+			PMSMPtr->Heartbeats.Flags.Laser = 0;
+		}
+		else {
+			// if GPS is critical we shutdown all
+			PMSMPtr->Shutdown.Status = 0xFF;
+		}
+
+
 		
 
-		if (_kbhit()) {
+		/*if (_kbhit()) {
 			PMSMPtr->Shutdown.Status = 0xFF;
 			bool ShutdownAll = false;
 			while (!ShutdownAll) {
@@ -138,9 +143,22 @@ int main() {
 
 				}
 			}
+		}*/
+
+		if (_kbhit()) {
+			PMSMPtr->Shutdown.Status = 0xFE;
+			bool allShutdown = false;
+			while (!allShutdown) {
+				if (PMSMPtr->Shutdown.Status == 0xFE) {
+					PMSMPtr->Shutdown.Flags.PM = 1;
+					allShutdown = true;
+				}
+			}
 		}
+
 		Thread::Sleep(10);
 		Console::WriteLine("GPS Hearthbeats: {0}", PMSMPtr->Heartbeats.Flags.GPS);
+		Console::WriteLine("Laser Heartbeats: " + PMSMPtr->Heartbeats.Flags.Laser);
 	}
 	Console::ReadKey();
 	Console::WriteLine("Process manager terminated");

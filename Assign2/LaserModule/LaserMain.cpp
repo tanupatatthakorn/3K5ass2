@@ -42,8 +42,6 @@ int main() {
 	int waitCount = 0;
 	
 
-	
-
 	/*
 	// LMS151 port number must be 23000
 	int PortNumber = 23000;
@@ -135,35 +133,45 @@ int main() {
 		Console::WriteLine("NumePoints: " + NumRanges + " Start Angle: " + StartAngle + " Resolution: " + Resolution);
 		*/
 
-		int num = LaserPtr->NumRanges;
-
-		for (int i = 0; i < num; i++) {
-			LaserPtr->XRange[i] = MyLaser->RangeX[i];
-			LaserPtr->YRange[i] = MyLaser->RangeY[i];
-		}
-
-		Console::WriteLine("Angle: " + MyLaser->GetStartAngle() + " Reso: " + MyLaser->GetResolution());
-
 		PMSMPtr->Heartbeats.Flags.Laser = 1;
 		if (PMSMPtr->PMHeartbeats.Flags.Laser == 1) {
-			
+
 			PMSMPtr->PMHeartbeats.Flags.Laser = 0;
 			waitCount = 0;
 		}
 		else {
 			if (++waitCount > 50) {
 				// we have waited too long
+				Console::WriteLine("we have waited too long");
 				PMSMPtr->Shutdown.Status = 0xFF;
 			}
-			
+
 		}
+
+		MyLaser->GetXYRangeData();
+		if (MyLaser->NumRanges != 361) continue;
+		
+		int num = MyLaser->NumRanges;
+		
+		LaserPtr->NumRanges = MyLaser->NumRanges;
+
+		for (int i = 0; i < num; i++) {
+			LaserPtr->XRange[i] = MyLaser->RangeX[i];
+			LaserPtr->YRange[i] = MyLaser->RangeY[i];
+		}
+		
+		Console::WriteLine("Num: "+num+ " Angle: " + MyLaser->GetStartAngle() + " Reso: " + MyLaser->GetResolution());
+
+		Console::WriteLine("NumPoints: " + LaserPtr->NumRanges);
+
+		Console::WriteLine("X: " + LaserPtr->XRange[0] + " Y: " + LaserPtr->YRange[0]);
 		//if (_kbhit()) break;
 		Thread::Sleep(20);
 			
 	}
 
-
+	
 	Console::WriteLine("Laser Process terminated");
-	//Console::ReadKey();
+	Console::ReadKey();
 	return 0;
 }

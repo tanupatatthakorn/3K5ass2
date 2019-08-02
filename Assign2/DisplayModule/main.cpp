@@ -5,6 +5,10 @@
 #include <cstring>
 #include <sstream>
 #include <map>
+#using <System.dll>
+#include <conio.h>
+#include <SMObject.h>
+#include <SMStructs.h>
 
 #ifdef __APPLE__
 	#include <OpenGL/gl.h>
@@ -67,6 +71,14 @@ double steering = 0;
 //int _tmain(int argc, _TCHAR* argv[]) {
 int main(int argc, char ** argv) {
 
+	SMObject LaserObj(_TEXT("LaserObj"), sizeof(Laser));
+	Laser* LaserPtr = nullptr;
+
+	LaserObj.SMAccess();
+
+	LaserPtr = (Laser*)LaserObj.pData;
+
+
 	const int WINDOW_WIDTH = 800;
 	const int WINDOW_HEIGHT = 600;
 
@@ -98,7 +110,7 @@ int main(int argc, char ** argv) {
 	//   with the name of the class you want to show as the current 
 	//   custom vehicle.
 	// -------------------------------------------------------------------------
-	vehicle = new MyVehicle();
+	vehicle = new MyVehicle(&LaserPtr->NumRanges, LaserPtr->XRange, LaserPtr->YRange);
 
 
 	glutMainLoop();

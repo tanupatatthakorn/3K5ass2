@@ -129,6 +129,9 @@
     <ClCompile Include="..\Common\SMObject.cpp" />
     <ClCompile Include="PMMain.cpp" />
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\include\SMStructs.h" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

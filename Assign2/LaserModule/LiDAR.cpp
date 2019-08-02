@@ -8,7 +8,7 @@ LiDAR::LiDAR(System::String^ ipaddress, int port)
 	Client = gcnew TcpClient(IPAddress, PortNumber);
 	//Client settings
 	Client->NoDelay = true;
-	Client->ReceiveTimeout = 500;//ms
+	Client->ReceiveTimeout = 2000;//ms
 	Client->SendTimeout = 500;//ms
 	Client->ReceiveBufferSize = 1024;
 	Client->SendBufferSize = 1024;
@@ -65,26 +65,28 @@ void LiDAR::GetXYRangeData()
 	Stream->Read(ReadData, 0, ReadData->Length);
 	// Convert incoming data from an array of unsigned char bytes to an ASCII string
 	ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
-	// Print the received string on the screen
-	//Console::WriteLine(ResponseData);
-
+	
 	//point to array of pointers
 	Fragments = ResponseData->Split(' ');
+	Console::WriteLine(Fragments->Length);
+	if (Fragments->Length > 25) {
+		this->StartAngle = System::Convert::ToInt32(Fragments[23], 16);
+		this->Resolution = System::Convert::ToInt32(Fragments[24], 16) / 10000.0;
+		this->NumRanges = System::Convert::ToInt32(Fragments[25], 16);
 
-	StartAngle = System::Convert::ToInt32(Fragments[23], 16);
-	Resolution = System::Convert::ToInt32(Fragments[24], 16) / 10000.0;
-	NumRanges = System::Convert::ToInt32(Fragments[25], 16);
-
-	Ranges = gcnew array<double>(NumRanges);
-	RangeX = gcnew array<double>(NumRanges);
-	RangeY = gcnew array<double>(NumRanges);
-
-	for (int i = 0; i < NumRanges; i++)
-		{
-			Ranges[i] = System::Convert::ToInt32(Fragments[26 + i], 16);
-			RangeX[i] = Ranges[i] * Math::Sin(i * Resolution * Math::PI / 180.0);
-			RangeY[i] = -Ranges[i] * Math::Cos(i * Resolution * Math::PI / 180.0);
+		this->Ranges = gcnew array<double>(NumRanges);
+		this->RangeX = gcnew array<double>(NumRanges);
+		this->RangeY = gcnew array<double>(NumRanges);
+		if (Fragments->Length >= 25 + NumRanges) {
+			for (int i = 0; i < NumRanges; i++)
+			{
+				Ranges[i] = System::Convert::ToInt32(Fragments[26 + i], 16);
+				RangeX[i] = Ranges[i] * Math::Sin(i * Resolution * Math::PI / 180.0);
+				RangeY[i] = -Ranges[i] * Math::Cos(i * Resolution * Math::PI / 180.0);
+			}
 		}
+	}
+	Thread::Sleep(100);
 }
 
 double LiDAR::GetStartAngle()

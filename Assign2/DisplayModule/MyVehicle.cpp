@@ -136,12 +136,40 @@ MyVehicle::MyVehicle()
 {
 }
 
+MyVehicle::MyVehicle(int * NumPoints, double* X, double* Y)
+{
+	this->NumPoints = NumPoints;
+	this->X = X;
+	this->Y = Y;
+}
+
 void MyVehicle::draw()
 {
 	glPushMatrix();
 	positionInGL();
 	
 	drawUGV(steering);
-
+	drawLaser();
 	glPopMatrix();
+
+	
+}
+
+void MyVehicle::drawLaser()
+{
+	glPushMatrix();
+	glBegin(GL_LINES);
+	double X1, Y1;
+	double z = 30.0;
+
+	for (int i = 0; i < *NumPoints; i++) {
+		X1 = *(X+i);
+		Y1 = *(Y+i);
+		glVertex3f(.5, z/100,-0.4 + 0.15); //Start of line
+		glVertex3f(X1/100, z / 100, -Y1/100); //End of line
+	}
+
+	glEnd();
+	glPopMatrix();
+	
 }

@@ -4,7 +4,7 @@
 #include <iostream>
 #include <TlHelp32.h>
 
-#define UNIT_PROCESS 2
+#define UNIT_PROCESS 3
 
 using namespace System; // for console
 using namespace System::Threading;
@@ -13,10 +13,11 @@ using namespace System::Threading;
 TCHAR* Units[10] = //
 {
 	TEXT("LASERModule.exe"),
+	TEXT("DisplayModule.exe"),
 	TEXT("GPSModule.exe"),
 	TEXT("XBoxModule.exe"),
 	TEXT("VehicleModule.exe"),
-	TEXT("OpenGLModule.exe"),
+	
 
 };
 
@@ -46,9 +47,13 @@ bool IsProcessRunning(const char* processName)
 int main() {
 	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
 	SMObject LaserObj(_TEXT("LaserObj"), sizeof(Laser));
+	SMObject GPSObj(_TEXT("GPSObj"), sizeof(GPS));
 	PM* PMSMPtr = nullptr;
 	Laser* LaserPtr = nullptr;
+	GPS* GPSPtr = nullptr;
 
+	//Create/Access SM
+	//PM
 	PMObj.SMCreate();
 	if (PMObj.SMCreateError) {
 		Console::WriteLine("Shared memory creation failed");
@@ -60,9 +65,25 @@ int main() {
 		Console::WriteLine("Shared memory access failed");
 		return -2;
 	}
-
+	//Laser
 	LaserObj.SMCreate();
 	LaserObj.SMAccess();
+	//GPS
+	GPSObj.SMCreate();
+	if (GPSObj.SMCreateError) {
+		Console::WriteLine("GPS create failed");
+		Console::ReadKey();
+		return 0;
+	}
+
+	GPSObj.SMAccess();
+	if (GPSObj.SMAccessError) {
+		Console::WriteLine(
+			"Error"
+		);
+		Console::ReadKey();
+		return 0;
+	}
 
 	PMSMPtr = (PM*)PMObj.pData;
 	PMSMPtr->Shutdown.Flags.PM = 0;
@@ -110,20 +131,20 @@ int main() {
 		if (PMSMPtr->Heartbeats.Flags.GPS == 1) {
 			PMSMPtr->Heartbeats.Flags.GPS = 0;
 		}
-		else {
-			// if GPS is critical we shutdown all
-			PMSMPtr->Shutdown.Status = 0xFF;
-		}
+		//else {
+		//	// if GPS is critical we shutdown all
+		//	PMSMPtr->Shutdown.Status = 0xFF;
+		//}
 
-		PMSMPtr->PMHeartbeats.Flags.Laser = 1;
-		if (PMSMPtr->Heartbeats.Flags.Laser == 1) {
-			
-			PMSMPtr->Heartbeats.Flags.Laser = 0;
-		}
-		else {
-			// if GPS is critical we shutdown all
-			PMSMPtr->Shutdown.Status = 0xFF;
-		}
+		//PMSMPtr->PMHeartbeats.Flags.Laser = 1;
+		//if (PMSMPtr->Heartbeats.Flags.Laser == 1) {
+		//	
+		//	PMSMPtr->Heartbeats.Flags.Laser = 0;
+		//}
+		//else {
+		//	// if GPS is critical we shutdown all
+		//	PMSMPtr->Shutdown.Status = 0xFF;
+		//}
 
 
 		
@@ -157,8 +178,13 @@ int main() {
 		}
 
 		Thread::Sleep(10);
-		Console::WriteLine("GPS Hearthbeats: {0}", PMSMPtr->Heartbeats.Flags.GPS);
-		Console::WriteLine("Laser Heartbeats: " + PMSMPtr->Heartbeats.Flags.Laser);
+
+		Console::WriteLine("NumPoints: " + LaserPtr->NumRanges);
+		for (int i = 0; i < 4; i++) {
+			Console::WriteLine("X: " + LaserPtr->XRange[i] + " Y: "+ LaserPtr->YRange[i]);
+		}
+	//	Console::WriteLine("GPS Hearthbeats: {0}", PMSMPtr->Heartbeats.Flags.GPS);
+	//	Console::WriteLine("Laser Heartbeats: " + PMSMPtr->Heartbeats.Flags.Laser);
 	}
 	Console::ReadKey();
 	Console::WriteLine("Process manager terminated");

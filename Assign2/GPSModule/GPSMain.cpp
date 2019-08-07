@@ -50,40 +50,40 @@ int main() {
 	PMSMPtr = (PM*)PMObj.pData;
 	PMSMPtr->Shutdown.Flags.GPS = 0;
 	GPSPtr = (GPS*)GPSObj.pData;
+	// GPS uses PORT number 24000
+	int PortNumber = 24000;
+	// Pointer to TcpClent type object on managed heap
+	TcpClient^ Client;
+	// arrays of unsigned chars to send and receive data
+	array<unsigned char>^ SendData = nullptr;
+	array<unsigned char>^ ReadData = nullptr;
 
+	// Creat TcpClient object and connect to it
+	Client = gcnew TcpClient("192.168.1.200", 24000);
+	// Configure connection
+	Client->NoDelay = true;
+	Client->ReceiveTimeout = 2000;//ms
+	Client->SendTimeout = 500;//ms
+	Client->ReceiveBufferSize = 1024;
+	Client->SendBufferSize = 1024;
+	// unsigned char arrays of 16 bytes each are created on managed heap
+	SendData = gcnew array<unsigned char>(16);
+	ReadData = gcnew array<unsigned char>(256);
+
+	// Get the network streab object associated with client so we 
+	// can use it to read and write
+	NetworkStream^ Stream = Client->GetStream();
 
 	while (!PMSMPtr->Shutdown.Flags.GPS) {
 
-		// GPS uses PORT number 24000
-		int PortNumber = 24000;
-		// Pointer to TcpClent type object on managed heap
-		TcpClient^ Client;
-		// arrays of unsigned chars to send and receive data
-		array<unsigned char>^ SendData = nullptr;
-		array<unsigned char>^ ReadData = nullptr;
 
-		// String to store received data for display
-		//System::String^ ResponseData;
-
-		// Creat TcpClient object and connect to it
-		Client = gcnew TcpClient("192.168.1.200", 24000);
-		// Configure connection
-		Client->NoDelay = true;
-		Client->ReceiveTimeout = 2000;//ms
-		Client->SendTimeout = 500;//ms
-		Client->ReceiveBufferSize = 1024;
-		Client->SendBufferSize = 1024;
-
-		// unsigned char arrays of 16 bytes each are created on managed heap
-		SendData = gcnew array<unsigned char>(16);
-		ReadData = gcnew array<unsigned char>(256);
-
-		// Get the network streab object associated with client so we 
-		// can use it to read and write
-		NetworkStream^ Stream = Client->GetStream();
 
 		// Wait for the server to prepare the data, 1 ms would be sufficient, but used 10 ms
-		System::Threading::Thread::Sleep(20);
+		Thread::Sleep(10);
+
+		if (Stream->DataAvailable) {
+			Console::WriteLine("Data available");
+		}
 
 		//if (Stream->DataAvailable) {
 			Stream->Read(ReadData, 0, ReadData->Length);
@@ -120,8 +120,6 @@ int main() {
 		unsigned int GeneratedCRC = CalculateBlockCRC32(108, ptr);
 
 		if (GeneratedCRC == GD.CRC) { //check if prints correctly
-			Console::WriteLine("Checksum correct");
-
 			//added to SM
 			GPSPtr->Northing = GD.northing;
 			GPSPtr->Easting = GD.easting;

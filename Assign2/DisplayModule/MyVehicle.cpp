@@ -166,7 +166,7 @@ void MyVehicle::drawLaser()
 		X1 = *(X+i);
 		Y1 = *(Y+i);
 		glVertex3f(.5, z/100,-0.4 + 0.15); //Start of line
-		glVertex3f(X1/100, z / 100, -Y1/100); //End of line
+		glVertex3f(X1/1000, z / 100, -Y1/1000); //End of line
 	}
 
 	glEnd();

@@ -27,12 +27,12 @@ LiDAR::LiDAR(System::String^ ipaddress, int port)
 	SendData = System::Text::Encoding::ASCII->GetBytes(AskID);
 	// Send Authetication String
 	Stream->Write(SendData, 0, SendData->Length);
-	// Read the incoming data
-	Stream->Read(ReadData, 0, ReadData->Length);
-	// Convert incoming data from an array of unsigned char bytes to an ASCII string
-	this->ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
-	// Print the received string on the screen
-	Console::WriteLine(this->ResponseData);
+	//// Read the incoming data
+	//Stream->Read(ReadData, 0, ReadData->Length);
+	//// Convert incoming data from an array of unsigned char bytes to an ASCII string
+	//this->ResponseData = System::Text::Encoding::ASCII->GetString(ReadData);
+	//// Print the received string on the screen
+	//Console::WriteLine(this->ResponseData);
 }
 
 bool LiDAR::Connect()
@@ -86,7 +86,7 @@ void LiDAR::GetXYRangeData()
 			}
 		}
 	}
-	Thread::Sleep(100);
+	//hread::Sleep(50);
 }
 
 double LiDAR::GetStartAngle()

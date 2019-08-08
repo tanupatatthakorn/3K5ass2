@@ -158,18 +158,20 @@ void MyVehicle::draw()
 void MyVehicle::drawLaser()
 {
 	glPushMatrix();
-	glBegin(GL_LINES);
+	glTranslatef(0.5, 0.3, 0);
+	
 	double X1, Y1;
-	double z = 30.0;
 
 	for (int i = 0; i < *NumPoints; i++) {
+		glBegin(GL_LINES);
 		X1 = *(X+i);
 		Y1 = *(Y+i);
-		glVertex3f(.5, z/100,-0.4 + 0.15); //Start of line
-		glVertex3f(X1/1000, z / 100, -Y1/1000); //End of line
+		glVertex3f(0, 0, 0); //Start of line
+		glVertex3f(X1/1000.0, 0, -Y1/1000.0); //End of line
+		glEnd();
 	}
 
-	glEnd();
+	
 	glPopMatrix();
 	
 }

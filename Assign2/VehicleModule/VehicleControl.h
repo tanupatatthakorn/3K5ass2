@@ -1,6 +1,4 @@
 #pragma once
-
-
 #include <SMObject.h>
 #include <SMStructs.h>
 #include <conio.h>
@@ -26,5 +24,5 @@ public:
 	VehicleControl();
 	~VehicleControl();
 	VehicleControl(System::String^ hostName, int portNumber);
-	void setControl(double Steering, double Speed, bool flag);
+	void setControl(double Steering, double Speed, unsigned char flag);
 };

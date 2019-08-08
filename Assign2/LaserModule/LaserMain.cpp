@@ -23,25 +23,13 @@ int main() {
 	PMObj.SMAccess();
 	LaserObj.SMAccess();
 
-	if (PMObj.SMAccessError) {
-		Console::WriteLine("Shared memory access failed");
-		return -2;
-	}
-	if (LaserObj.SMAccessError) {
-		Console::WriteLine("Shared memory access failed");
-		return -2;
-	}
-
 	//Instantiate pointers
 	PMSMPtr = (PM*)PMObj.pData;
 	PMSMPtr->Shutdown.Flags.Laser = 0;
 	LaserPtr = (Laser*)LaserObj.pData;
 	
-
 	//initiate wait count
 	int waitCount = 0;
-	
-
 	/*
 	// LMS151 port number must be 23000
 	int PortNumber = 23000;
@@ -160,13 +148,13 @@ int main() {
 			LaserPtr->YRange[i] = MyLaser->RangeY[i];
 		}
 		
-		Console::WriteLine("Num: "+num+ " Angle: " + MyLaser->GetStartAngle() + " Reso: " + MyLaser->GetResolution());
+		//Console::WriteLine("Num: "+num+ " Angle: " + MyLaser->GetStartAngle() + " Reso: " + MyLaser->GetResolution());
 
-		Console::WriteLine("NumPoints: " + LaserPtr->NumRanges);
+		Console::WriteLine("NumPoints: " + LaserPtr->NumRanges + " waitcount: " + waitCount);
 
-		Console::WriteLine("X: " + LaserPtr->XRange[0] + " Y: " + LaserPtr->YRange[0]);
-		//if (_kbhit()) break;
-		Thread::Sleep(20);
+		//Console::WriteLine("X: " + LaserPtr->XRange[0] + " Y: " + LaserPtr->YRange[0]);
+		
+		Thread::Sleep(100);
 			
 	}
 

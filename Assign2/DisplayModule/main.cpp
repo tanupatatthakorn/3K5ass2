@@ -42,6 +42,13 @@
 #include "Messages.hpp"
 #include "HUD.hpp"
 
+#include "XboxController.h"
+#include "XInputWrapper.h"
+
+//XInputWrapper xinput;
+//
+//GamePad::XBoxController player(&xinput, 0);
+
 void display();
 void reshape(int width, int height);
 void idle();
@@ -210,6 +217,10 @@ void idle() {
 		Camera::get()->strafeUp();
 	}
 
+	SMObject XboxObj(_TEXT("XboxObj"), sizeof(Remote));
+	XboxObj.SMAccess();
+	Remote* XboxPtr = (Remote*)XboxObj.pData;
+
 	speed = 0;
 	steering = 0;
 
@@ -228,9 +239,11 @@ void idle() {
 	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_DOWN)) {
 		speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
 	}
-
-
-
+	else {
+		steering = XboxPtr->SetSteering * 1.0;
+		speed = XboxPtr->SetSpeed;
+	}
+	
 
 	const float sleep_time_between_frames_in_seconds = 0.025;
 

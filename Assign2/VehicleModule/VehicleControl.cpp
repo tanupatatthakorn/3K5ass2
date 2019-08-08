@@ -29,7 +29,7 @@ VehicleControl::VehicleControl(System::String^ ipaddress, int portNumber)
 	System::String^ AskID = gcnew System::String("z5224734\n");
 	SendData = gcnew array<unsigned char>(16);
 	ReadData = gcnew array<unsigned char>(2500);
-	NetworkStream^ Stream = Client->GetStream();
+	this->Stream = Client->GetStream();
 
 	SendData = System::Text::Encoding::ASCII->GetBytes(AskID);
 
@@ -42,9 +42,9 @@ VehicleControl::VehicleControl(System::String^ ipaddress, int portNumber)
 	Console::WriteLine(ResponseData);
 }
 
-void VehicleControl::setControl(double Steering, double Speed, bool flag)
+void VehicleControl::setControl(double Steering, double Speed, unsigned char flag)
 {
-	auto SteerStr = std::to_string(Steering);
+	auto SteerStr = std::to_string(-Steering);
 	auto SpeedStr = std::to_string(Speed);
 	auto flagStr = std::to_string(flag);
 	auto SendString = "# " + SteerStr + " " + SpeedStr + " " + flagStr + " #";

@@ -76,8 +76,6 @@ int main() {
 
 	while (!PMSMPtr->Shutdown.Flags.GPS) {
 
-
-
 		// Wait for the server to prepare the data, 1 ms would be sufficient, but used 10 ms
 		Thread::Sleep(10);
 
@@ -85,14 +83,12 @@ int main() {
 			Console::WriteLine("Data available");
 		}
 
-		//if (Stream->DataAvailable) {
-			Stream->Read(ReadData, 0, ReadData->Length);
-		//}
+		Stream->Read(ReadData, 0, ReadData->Length);
 
 		//Check read data for GPS
-		for (int i = 0; i < ReadData->Length; i++) {
-			Console::Write("{0:X2} ", ReadData[i]);
-		}
+		//for (int i = 0; i < ReadData->Length; i++) {
+		//	Console::Write("{0:X2} ", ReadData[i]);
+		//}
 
 		unsigned char* BytePtr = (unsigned char*)& GD;
 
@@ -124,13 +120,11 @@ int main() {
 			GPSPtr->Northing = GD.northing;
 			GPSPtr->Easting = GD.easting;
 			GPSPtr->Height = GD.hgt;
-			Console::WriteLine("N: " + GPSPtr->Northing + " E: " + GPSPtr->Easting + " H: " + GPSPtr->Height + " CRC: " + GD.CRC);
+			Console::WriteLine("N: " + GPSPtr->Northing + " E: " + GPSPtr->Easting + " H: " + GPSPtr->Height + " CalCRC: " + GeneratedCRC + " CRC: " + GD.CRC);
 			
 		}
 
-
 		PMSMPtr->Heartbeats.Flags.GPS = 1;
-		Console::WriteLine("GPS is alive");
 		if (PMSMPtr->PMHeartbeats.Flags.GPS == 1) {
 
 			PMSMPtr->PMHeartbeats.Flags.GPS = 0;
@@ -142,12 +136,13 @@ int main() {
 				PMSMPtr->Shutdown.Status = 0xFF;
 			}
 		}
-		//if (_kbhit()) break;
+		
+		Console::WriteLine("GPS is alive" + "waitcount: " + waitCount);
 		Thread::Sleep(20);
 	}
 
 	Console::WriteLine("GPS Process terminated");
-	Console::ReadKey();
+	//Console::ReadKey();
 	return 0;
 }
 

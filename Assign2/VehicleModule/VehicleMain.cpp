@@ -22,18 +22,14 @@ int main() {
 	
 	PMObj.SMAccess();
 	XboxObj.SMAccess();
-	if (XboxObj.SMAccessError) {
-		Console::WriteLine("Shared memory access failed");
-		return -2;
-	}
 
 	PMSMPtr = (PM*)PMObj.pData;
 	XboxPtr = (Remote*)XboxObj.pData;
 
 	PMSMPtr->Shutdown.Flags.Vehicle = 0;
 	
-	bool flag = 1;
-	int waitCount;
+	unsigned char flag = 1;
+	int waitCount = 0;
 
 	while (!PMSMPtr->Shutdown.Flags.Vehicle) {
 
@@ -54,10 +50,12 @@ int main() {
 			}
 		}
 		
-		System::Threading::Thread::Sleep(200);
+		Console::WriteLine("waitcount: " + waitCount + " Steer: " + XboxPtr->SetSteering + " Speed: " + XboxPtr->SetSpeed);
+		System::Threading::Thread::Sleep(100);
 
 	}
 
 	Console::WriteLine("Vehicle Process terminated");
+	Console::ReadKey();
 	return 0;
 }

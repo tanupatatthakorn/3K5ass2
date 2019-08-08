@@ -51,6 +51,12 @@
     <ClInclude Include="..\Common\SMObject.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="XboxController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="XInputWrapper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp">
@@ -90,6 +96,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Common\SMObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="XBoxController.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

@@ -139,6 +139,8 @@
     <ClInclude Include="Shape.hpp" />
     <ClInclude Include="VectorMaths.hpp" />
     <ClInclude Include="Vehicle.hpp" />
+    <ClInclude Include="XboxController.h" />
+    <ClInclude Include="XInputWrapper.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Common\SMObject.cpp" />
@@ -154,6 +156,7 @@
     <ClCompile Include="Shape.cpp" />
     <ClCompile Include="VectorMaths.cpp" />
     <ClCompile Include="Vehicle.cpp" />
+    <ClCompile Include="XBoxController.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

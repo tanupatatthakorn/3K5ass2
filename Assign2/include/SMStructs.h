@@ -19,7 +19,8 @@ struct ModuleFlags {
 		Laser : 1,
 		Xbox : 1,
 		Vehicle : 1,
-		Unused : 3;
+		Display : 1,
+		Unused : 2;
 };
 
 union ExecFlags

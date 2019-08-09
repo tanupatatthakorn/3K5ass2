@@ -1,5 +1,7 @@
 #include "VehicleControl.h"
 
+System::Convert;
+
 VehicleControl::VehicleControl()
 {
 	
@@ -26,7 +28,7 @@ VehicleControl::VehicleControl(System::String^ ipaddress, int portNumber)
 
 	array<unsigned char>^ ReadData = nullptr;
 
-	System::String^ AskID = gcnew System::String("z5224734\n");
+	System::String^ AskID = gcnew System::String("5224734\n");
 	SendData = gcnew array<unsigned char>(16);
 	ReadData = gcnew array<unsigned char>(2500);
 	this->Stream = Client->GetStream();
@@ -47,10 +49,12 @@ void VehicleControl::setControl(double Steering, double Speed, unsigned char fla
 	auto SteerStr = std::to_string(-Steering);
 	auto SpeedStr = std::to_string(Speed);
 	auto flagStr = std::to_string(flag);
-	auto SendString = "# " + SteerStr + " " + SpeedStr + " " + flagStr + " #";
+	//auto SendString = "# " + SteerStr + " " + SpeedStr + " " + flagStr + " #";
 
-	Console::WriteLine(SendString.c_str());
-	System::String^ VControl = gcnew System::String(SendString.c_str());
+//	Console::WriteLine(SendString.c_str());
+	//System::String^ VControl = gcnew System::String(SendString.c_str());
+	System::String^ VControl = gcnew System::String("# " + System::Convert::ToString(-Steering) + " " + System::Convert::ToString(Speed) + " " + System::Convert::ToString(flag) + " #");
+	Console::WriteLine(VControl);
 	SendData = System::Text::Encoding::ASCII->GetBytes(VControl);
 
 	Stream->WriteByte(0x2);

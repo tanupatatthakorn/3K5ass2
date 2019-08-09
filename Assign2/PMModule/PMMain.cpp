@@ -108,13 +108,13 @@ int main() {
 		std::cout << "Started: " << Units[i] << std::endl;
 		Sleep(200);
 	}
-	//Heartbeat loop
+	//main loop
 	while (!PMSMPtr->Shutdown.Flags.PM) {
 
 		// GPS must have set this to HIGH
 		PMSMPtr->PMHeartbeats.Status = 0xFF;
 
-		Thread::Sleep(200);
+		Thread::Sleep(300);
 
 		//--------GPS Heartbeats--------
 		if (PMSMPtr->Heartbeats.Flags.GPS == 1) {
@@ -169,7 +169,7 @@ int main() {
 			PMSMPtr->Heartbeats.Flags.Xbox = 0;
 		}
 		else {
-			Console::WriteLine("failed in PM");
+			Console::WriteLine("Xbox failed in PM");
 			PMSMPtr->Shutdown.Status = 0xFF;
 		}
 
@@ -180,25 +180,28 @@ int main() {
 			PMSMPtr->Heartbeats.Flags.Vehicle = 0;
 		}
 		else {
+			Console::WriteLine("Vehicle failed in PM");
 			PMSMPtr->Shutdown.Status = 0xFF;
 		}
 
-		/*if (_kbhit()) {
-			PMSMPtr->Shutdown.Status = 0xFF;
-			bool ShutdownAll = false;
-			while (!ShutdownAll) {
-				for (int i = 0; i < UNIT_PROCESS; i++) {
-					if (IsProcessRunning(Units[i])) {
-						ShutdownAll = false;
-						break;
-					}
-					else {
-						ShutdownAll = true;
-					}
 
-				}
-			}
-		}*/
+
+		//if (_kbhit()) {
+		//	PMSMPtr->Shutdown.Status = 0xFF;
+		//	bool ShutdownAll = false;
+		//	while (!ShutdownAll) {
+		//		for (int i = 0; i < UNIT_PROCESS; i++) {
+		//			if (IsProcessRunning(Units[i])) {
+		//				ShutdownAll = false;
+		//				break;
+		//			}
+		//			else {
+		//				ShutdownAll = true;
+		//			}
+
+		//		}
+		//	}
+		//}
 
 		/*if (_kbhit()) {
 			PMSMPtr->Shutdown.Status = 0xFE;

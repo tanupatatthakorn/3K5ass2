@@ -45,6 +45,9 @@
 #include "XboxController.h"
 #include "XInputWrapper.h"
 
+using namespace System; // for console
+using namespace System::Threading;
+
 //XInputWrapper xinput;
 //
 //GamePad::XBoxController player(&xinput, 0);
@@ -80,52 +83,51 @@ int main(int argc, char ** argv) {
 
 	SMObject LaserObj(_TEXT("LaserObj"), sizeof(Laser));
 	Laser* LaserPtr = nullptr;
-
 	LaserObj.SMAccess();
-
 	LaserPtr = (Laser*)LaserObj.pData;
 
 
-	const int WINDOW_WIDTH = 800;
-	const int WINDOW_HEIGHT = 600;
+		const int WINDOW_WIDTH = 800;
+		const int WINDOW_HEIGHT = 600;
 
-	glutInit(&argc, (char**)(argv));
-	glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
-	glutInitWindowPosition(0, 0);
-	glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
-	glutCreateWindow("MTRN3500 - GL");
+		glutInit(&argc, (char**)(argv));
+		glutInitDisplayMode(GLUT_RGBA | GLUT_DEPTH | GLUT_DOUBLE);
+		glutInitWindowPosition(0, 0);
+		glutInitWindowSize(WINDOW_WIDTH, WINDOW_HEIGHT);
+		glutCreateWindow("MTRN3500 - GL");
 
-	Camera::get()->setWindowDimensions(WINDOW_WIDTH, WINDOW_HEIGHT);
+		Camera::get()->setWindowDimensions(WINDOW_WIDTH, WINDOW_HEIGHT);
 
-	glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 
-	glutDisplayFunc(display);
-	glutReshapeFunc(reshape);
-	glutIdleFunc(idle);
+		glutDisplayFunc(display);
+		glutReshapeFunc(reshape);
+		glutIdleFunc(idle);
 
-	glutKeyboardFunc(keydown);
-	glutKeyboardUpFunc(keyup);
-	glutSpecialFunc(special_keydown);
-	glutSpecialUpFunc(special_keyup);
+		glutKeyboardFunc(keydown);
+		glutKeyboardUpFunc(keyup);
+		glutSpecialFunc(special_keydown);
+		glutSpecialUpFunc(special_keyup);
 
-	glutMouseFunc(mouse);
-	glutMotionFunc(dragged);
-	glutPassiveMotionFunc(motion);
+		glutMouseFunc(mouse);
+		glutMotionFunc(dragged);
+		glutPassiveMotionFunc(motion);
 
-	// -------------------------------------------------------------------------
-	// Please uncomment the following line of code and replace 'MyVehicle'
-	//   with the name of the class you want to show as the current 
-	//   custom vehicle.
-	// -------------------------------------------------------------------------
-	vehicle = new MyVehicle(&LaserPtr->NumRanges, LaserPtr->XRange, LaserPtr->YRange);
+		// -------------------------------------------------------------------------
+		// Please uncomment the following line of code and replace 'MyVehicle'
+		//   with the name of the class you want to show as the current 
+		//   custom vehicle.
+		// -------------------------------------------------------------------------
+		vehicle = new MyVehicle(&LaserPtr->NumRanges, LaserPtr->XRange, LaserPtr->YRange);
 
+		
+		glutMainLoop();
 
-	glutMainLoop();
+		if (vehicle != NULL) {
+			delete vehicle;
+		}
 
-	if (vehicle != NULL) {
-		delete vehicle;
-	}
-
+	
 	return 0;
 }
 
@@ -192,6 +194,40 @@ double getTime()
 }
 
 void idle() {
+
+	//SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
+
+	//PM* PMSMPtr = nullptr;
+
+	//PMObj.SMAccess();
+
+
+
+	//PMSMPtr = (PM*)PMObj.pData;
+
+
+	//int waitCount = 0;
+
+
+	//while (!PMSMPtr->Shutdown.Flags.Display) {
+	//	PMSMPtr->Heartbeats.Flags.Display = 1;
+	//	if (PMSMPtr->PMHeartbeats.Flags.Display == 1) {
+
+	//		PMSMPtr->PMHeartbeats.Flags.Display = 0;
+	//		waitCount = 0;
+	//	}
+	//	else {
+	//		if (++waitCount > 50) {
+	//			// we have waited too long
+	//			Console::WriteLine("we have waited too long");
+	//			PMSMPtr->Shutdown.Status = 0xFF;
+	//		}
+	//	}
+
+
+	//	Console::WriteLine("In loop");
+
+	//}
 
 	if (KeyManager::get()->isAsciiKeyPressed('a')) {
 		Camera::get()->strafeLeft();

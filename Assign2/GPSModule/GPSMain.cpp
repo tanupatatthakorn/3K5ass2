@@ -137,7 +137,7 @@ int main() {
 			}
 		}
 		
-		Console::WriteLine("GPS is alive" + "waitcount: " + waitCount);
+		Console::WriteLine("waitcount: " + waitCount);
 		Thread::Sleep(20);
 	}
 

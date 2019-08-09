@@ -195,35 +195,6 @@ int main() {
 			PMSMPtr->Shutdown.Status = 0xFF;
 		}
 
-
-		//if (_kbhit()) {
-		//	PMSMPtr->Shutdown.Status = 0xFF;
-		//	bool ShutdownAll = false;
-		//	while (!ShutdownAll) {
-		//		for (int i = 0; i < UNIT_PROCESS; i++) {
-		//			if (IsProcessRunning(Units[i])) {
-		//				ShutdownAll = false;
-		//				break;
-		//			}
-		//			else {
-		//				ShutdownAll = true;
-		//			}
-
-		//		}
-		//	}
-		//}
-
-		/*if (_kbhit()) {
-			PMSMPtr->Shutdown.Status = 0xFE;
-			bool allShutdown = false;
-			while (!allShutdown) {
-				if (PMSMPtr->Shutdown.Status == 0xFE) {
-					PMSMPtr->Shutdown.Flags.PM = 1;
-					allShutdown = true;
-				}
-			}
-		}*/
-
 		if (_kbhit())
 			PMSMPtr->Shutdown.Flags.PM =1;
 

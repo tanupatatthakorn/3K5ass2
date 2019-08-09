@@ -49,10 +49,7 @@ void VehicleControl::setControl(double Steering, double Speed, unsigned char fla
 	auto SteerStr = std::to_string(-Steering);
 	auto SpeedStr = std::to_string(Speed);
 	auto flagStr = std::to_string(flag);
-	//auto SendString = "# " + SteerStr + " " + SpeedStr + " " + flagStr + " #";
-
-//	Console::WriteLine(SendString.c_str());
-	//System::String^ VControl = gcnew System::String(SendString.c_str());
+	
 	System::String^ VControl = gcnew System::String("# " + System::Convert::ToString(-Steering) + " " + System::Convert::ToString(Speed) + " " + System::Convert::ToString(flag) + " #");
 	Console::WriteLine(VControl);
 	SendData = System::Text::Encoding::ASCII->GetBytes(VControl);

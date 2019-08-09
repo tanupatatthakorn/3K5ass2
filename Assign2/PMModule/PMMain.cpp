@@ -184,6 +184,16 @@ int main() {
 			PMSMPtr->Shutdown.Status = 0xFF;
 		}
 
+		//--------Vehicle Heartbeats--------
+		PMSMPtr->PMHeartbeats.Flags.Display = 1;
+		if (PMSMPtr->Heartbeats.Flags.Display == 1) {
+
+			PMSMPtr->Heartbeats.Flags.Display = 0;
+		}
+		else {
+			Console::WriteLine("Display failed in PM");
+			PMSMPtr->Shutdown.Status = 0xFF;
+		}
 
 
 		//if (_kbhit()) {

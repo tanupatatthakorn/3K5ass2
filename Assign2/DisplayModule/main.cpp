@@ -195,111 +195,115 @@ double getTime()
 
 void idle() {
 
-	//SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
+	SMObject PMObj(_TEXT("PMObj"), sizeof(PM));
 
-	//PM* PMSMPtr = nullptr;
+	PM* PMSMPtr = nullptr;
 
-	//PMObj.SMAccess();
-
-
-
-	//PMSMPtr = (PM*)PMObj.pData;
+	PMObj.SMAccess();
 
 
-	//int waitCount = 0;
+
+	PMSMPtr = (PM*)PMObj.pData;
 
 
-	//while (!PMSMPtr->Shutdown.Flags.Display) {
-	//	PMSMPtr->Heartbeats.Flags.Display = 1;
-	//	if (PMSMPtr->PMHeartbeats.Flags.Display == 1) {
-
-	//		PMSMPtr->PMHeartbeats.Flags.Display = 0;
-	//		waitCount = 0;
-	//	}
-	//	else {
-	//		if (++waitCount > 50) {
-	//			// we have waited too long
-	//			Console::WriteLine("we have waited too long");
-	//			PMSMPtr->Shutdown.Status = 0xFF;
-	//		}
-	//	}
+	int waitCount;
 
 
-	//	Console::WriteLine("In loop");
+//	while (!PMSMPtr->Shutdown.Flags.Display) {
+		PMSMPtr->Heartbeats.Flags.Display = 1;
+		if (PMSMPtr->PMHeartbeats.Flags.Display == 1) {
 
-	//}
+			PMSMPtr->PMHeartbeats.Flags.Display = 0;
+			waitCount = 0;
+		}
+		else {
+			if (++waitCount > 50) {
+				// we have waited too long
+				Console::WriteLine("we have waited too long");
+				PMSMPtr->Shutdown.Status = 0xFF;
+			}
+		}
 
-	if (KeyManager::get()->isAsciiKeyPressed('a')) {
-		Camera::get()->strafeLeft();
-	}
+		Thread::Sleep(10);
+		Console::WriteLine("In loop");
 
-	if (KeyManager::get()->isAsciiKeyPressed('c')) {
-		Camera::get()->strafeDown();
-	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('d')) {
-		Camera::get()->strafeRight();
-	}
 
-	if (KeyManager::get()->isAsciiKeyPressed('s')) {
-		Camera::get()->moveBackward();
-	}
+		if (KeyManager::get()->isAsciiKeyPressed('a')) {
+			Camera::get()->strafeLeft();
+		}
 
-	if (KeyManager::get()->isAsciiKeyPressed('w')) {
-		Camera::get()->moveForward();
-	}
+		if (KeyManager::get()->isAsciiKeyPressed('c')) {
+			Camera::get()->strafeDown();
+		}
 
-	if (KeyManager::get()->isAsciiKeyPressed(' ')) {
-		Camera::get()->strafeUp();
-	}
+		if (KeyManager::get()->isAsciiKeyPressed('d')) {
+			Camera::get()->strafeRight();
+		}
 
-	SMObject XboxObj(_TEXT("XboxObj"), sizeof(Remote));
-	XboxObj.SMAccess();
-	Remote* XboxPtr = (Remote*)XboxObj.pData;
+		if (KeyManager::get()->isAsciiKeyPressed('s')) {
+			Camera::get()->moveBackward();
+		}
 
-	speed = 0;
-	steering = 0;
+		if (KeyManager::get()->isAsciiKeyPressed('w')) {
+			Camera::get()->moveForward();
+		}
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_LEFT)) {
-		steering = Vehicle::MAX_LEFT_STEERING_DEGS * -1;   
-	}
+		if (KeyManager::get()->isAsciiKeyPressed(' ')) {
+			Camera::get()->strafeUp();
+		}
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_RIGHT)) {
-		steering = Vehicle::MAX_RIGHT_STEERING_DEGS * -1;
-	}
+		SMObject XboxObj(_TEXT("XboxObj"), sizeof(Remote));
+		XboxObj.SMAccess();
+		Remote* XboxPtr = (Remote*)XboxObj.pData;
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_UP)) {
-		speed = Vehicle::MAX_FORWARD_SPEED_MPS;
-	}
+		speed = 0;
+		steering = 0;
 
-	if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_DOWN)) {
-		speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
-	}
-	else {
-		steering = XboxPtr->SetSteering * 1.0;
-		speed = XboxPtr->SetSpeed;
-	}
-	
+		if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_LEFT)) {
+			steering = Vehicle::MAX_LEFT_STEERING_DEGS * -1;
+		}
 
-	const float sleep_time_between_frames_in_seconds = 0.025;
+		if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_RIGHT)) {
+			steering = Vehicle::MAX_RIGHT_STEERING_DEGS * -1;
+		}
 
-	static double previousTime = getTime();
-	const double currTime = getTime();
-	const double elapsedTime = currTime - previousTime;
-	previousTime = currTime;
+		if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_UP)) {
+			speed = Vehicle::MAX_FORWARD_SPEED_MPS;
+		}
 
-	// do a simulation step
-	if (vehicle != NULL) {
-		vehicle->update(speed, steering, elapsedTime);
-	}
+		if (KeyManager::get()->isSpecialKeyPressed(GLUT_KEY_DOWN)) {
+			speed = Vehicle::MAX_BACKWARD_SPEED_MPS;
+		}
+		else {
+			steering = XboxPtr->SetSteering * 1.0;
+			speed = XboxPtr->SetSpeed;
+		}
 
-	display();
+
+		const float sleep_time_between_frames_in_seconds = 0.025;
+
+		static double previousTime = getTime();
+		const double currTime = getTime();
+		const double elapsedTime = currTime - previousTime;
+		previousTime = currTime;
+
+		// do a simulation step
+		if (vehicle != NULL) {
+			vehicle->update(speed, steering, elapsedTime);
+		}
+
+		display();
+
+
 
 #ifdef _WIN32 
-	Sleep(sleep_time_between_frames_in_seconds * 1000);
+		Sleep(sleep_time_between_frames_in_seconds * 1000);
 #else
-	usleep(sleep_time_between_frames_in_seconds * 1e6);
+		usleep(sleep_time_between_frames_in_seconds * 1e6);
 #endif
+
+	
 };
 
 void keydown(unsigned char key, int x, int y) {

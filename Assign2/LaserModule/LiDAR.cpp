@@ -18,7 +18,7 @@ LiDAR::LiDAR(System::String^ ipaddress, int port)
 	array<unsigned char>^ ReadData = nullptr;
 	
 	//Initializations
-	System::String^ AskID = gcnew System::String("5224734\n");
+	System::String^ AskID = gcnew System::String("z5224734\n");
 	SendData = gcnew array<unsigned char>(16);
 	ReadData = gcnew array<unsigned char>(2500);
 	NetworkStream^ Stream = Client->GetStream();
